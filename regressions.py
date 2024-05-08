@@ -11,144 +11,16 @@ import pickle
 
 
 class Regressions:
-    __regressions_types = ['Linear Regression', 'Polynomial Regression', 'Ridge Regression', 'Lasso Regression',
-                           'ElasticNet Regression', 'Support Vector Regression', 'Decision Tree Regression',
-                           'Random Forest Regression', 'Gradient Boosting Regression',
-                           'Polynomial with Lasso']
 
     @staticmethod
-    def apply_regressions(x_train, y_train, x_test, y_test):
-
-        methods = [
-            Regressions.__LR, Regressions.__PR, Regressions.__RR, Regressions.__LAR,
-            Regressions.__ER, Regressions.__SVR, Regressions.__DT, Regressions.__RF,
-            Regressions.__GBR, Regressions.__poly_with_lasso
-        ]
-        returned_data = dict()
-
-        for i in range(len(Regressions.__regressions_types)):
-            returned_data[Regressions.__regressions_types[i]] = methods[i](x_train, y_train, x_test, y_test)
-
-        return returned_data
-
-    @staticmethod
-    def __saveModel(model_name, clf):
+    def __save_model(model_name, clf):
         with open(f'regressions_models/{model_name}.pkl', 'wb') as file:
             pickle.dump(clf, file)
 
     @staticmethod
-    def __LR(x_train, y_train, x_test, y_test):
-        model = LinearRegression()
-        model.fit(x_train, y_train)
-
-        # Regressions.__saveModel(Regressions.__regressions_types[0], model)
-
-        y_pred = model.predict(x_test)
-        mse = mean_squared_error(y_test, y_pred)
-        return mse, y_pred
-
-    @staticmethod
-    def __PR(x_train, y_train, x_test, y_test):
-        poly = PolynomialFeatures(degree=2)
-        x_poly_train = poly.fit_transform(x_train)
-        x_poly_test = poly.transform(x_test)
-        poly_model = LinearRegression()
-        poly_model.fit(x_poly_train, y_train)
-
-        # Regressions.__saveModel(Regressions.__regressions_types[1], poly_model)
-
-        y_pred = poly_model.predict(x_poly_test)
-        mse = mean_squared_error(y_test, y_pred)
-        return mse, y_pred
-
-    @staticmethod
-    def __RR(x_train, y_train, x_test, y_test):
-        model = Ridge(alpha=.005)
-        model.fit(x_train, y_train)
-
-        # Regressions.__saveModel(Regressions.__regressions_types[2], model)
-
-        y_pred = model.predict(x_test)
-        mse = mean_squared_error(y_test, y_pred)
-        return mse, y_pred
-
-    @staticmethod
-    def __LAR(x_train, y_train, x_test, y_test):
-        model = Lasso(alpha=.005)
-        model.fit(x_train, y_train)
-
-        # Regressions.__saveModel(Regressions.__regressions_types[3], model)
-
-        y_pred = model.predict(x_test)
-        mse = mean_squared_error(y_test, y_pred)
-        return mse, y_pred
-
-    @staticmethod
-    def __ER(x_train, y_train, x_test, y_test):
-        model = ElasticNet(alpha=.005, l1_ratio=1.0)
-        model.fit(x_train, y_train)
-
-        # Regressions.__saveModel(Regressions.__regressions_types[4], model)
-
-        y_pred = model.predict(x_test)
-        mse = mean_squared_error(y_test, y_pred)
-        return mse, y_pred
-
-    @staticmethod
-    def __SVR(x_train, y_train, x_test, y_test):
-        model = SVR(kernel='linear')
-        model.fit(x_train, y_train)
-
-        # Regressions.__saveModel(Regressions.__regressions_types[5], model)
-
-        y_pred = model.predict(x_test)
-        mse = mean_squared_error(y_test, y_pred)
-        return mse, y_pred
-
-    @staticmethod
-    def __DT(x_train, y_train, x_test, y_test):
-        model = DecisionTreeRegressor()
-        model.fit(x_train, y_train)
-
-        # Regressions.__saveModel(Regressions.__regressions_types[6], model)
-
-        y_pred = model.predict(x_test)
-        mse = mean_squared_error(y_test, y_pred)
-        return mse, y_pred
-
-    @staticmethod
-    def __RF(x_train, y_train, x_test, y_test):
-        model = RandomForestRegressor()
-        model.fit(x_train, y_train)
-
-        # Regressions.__saveModel(Regressions.__regressions_types[7], model)
-
-        y_pred = model.predict(x_test)
-        mse = mean_squared_error(y_test, y_pred)
-        return mse, y_pred
-
-    @staticmethod
-    def __GBR(x_train, y_train, x_test, y_test):
-        model = GradientBoostingRegressor()
-        model.fit(x_train, y_train)
-
-        # Regressions.__saveModel(Regressions.__regressions_types[8], model)
-
-        y_pred = model.predict(x_test)
-        mse = mean_squared_error(y_test, y_pred)
-        return mse, y_pred
-
-    @staticmethod
-    def __poly_with_lasso(x_train, y_train, x_test, y_test):
-        model = Pipeline([('poly', PolynomialFeatures(degree=2)),
-                          ('lasso', Lasso(alpha=0.001))])
-        model.fit(x_train, y_train)
-
-        # Regressions.__saveModel(Regressions.__regressions_types[9], model)
-
-        y_pred = model.predict(x_test)
-        mse = mean_squared_error(y_test, y_pred)
-        return mse, y_pred
+    def __get_saved_model(model_name):
+        with open(f'regressions_models/{model_name}.pkl', 'rb') as file:
+            return pickle.load(file)
 
     @staticmethod
     def plotting(y_test, y_pred, mse, model_name):
@@ -166,3 +38,45 @@ class Regressions:
 
         plt.subplots_adjust(left=0.1, bottom=0.07, right=0.9, top=0.925, wspace=0.4, hspace=1)
         plt.show()
+
+    @staticmethod
+    def regression(x_train, y_train, x_test, y_test, train=True):
+        models_names = ['Linear Regression', 'Polynomial Regression', 'Ridge Regression', 'Lasso Regression',
+                        'ElasticNet Regression', 'Support Vector Regression', 'Decision Tree Regression',
+                        'Random Forest Regression', 'Gradient Boosting Regression', 'Polynomial with Lasso']
+
+        models = [LinearRegression(), PolynomialFeatures(degree=2), Ridge(alpha=.005),
+                  Lasso(alpha=.005), ElasticNet(alpha=.005, l1_ratio=1.0), SVR(kernel='linear'),
+                  DecisionTreeRegressor(),RandomForestRegressor(), GradientBoostingRegressor(),
+                  Pipeline([('poly', PolynomialFeatures(degree=2)),('lasso', Lasso(alpha=0.001))])]
+
+        y_preds, mse = [], []
+
+        for i in range(len(models_names)):
+            if models_names[i] != 'Polynomial Regression':
+                if train:
+                    working_clf = models[i]
+                    working_clf.fit(x_train, y_train)
+                    Regressions.__save_model(models_names[i], working_clf)
+                else:
+                    working_clf = Regressions.__get_saved_model(models_names[i])
+
+                y_pred = working_clf.predict(x_test)
+                mse.append(mean_squared_error(y_test, y_pred))
+                y_preds.append(y_pred)
+            else:
+                working_clf = models[i]
+                x_poly_train = working_clf.transform(x_train)
+                x_poly_test = working_clf.transform(x_test)
+                if train:
+                    poly_model = models[i - 1]
+                    poly_model.fit(x_poly_train, y_train)
+                    Regressions.__save_model(models_names[i], poly_model)
+                else:
+                    poly_model = Regressions.__get_saved_model(models_names[i])
+
+                y_pred = poly_model.predict(x_poly_test)
+                mse.append(mean_squared_error(y_test, y_pred))
+                y_preds.append(y_pred)
+
+        return models_names, y_preds, mse,

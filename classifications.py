@@ -1,211 +1,56 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
 from sklearn.metrics import mean_squared_error, accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
 import time
 from matplotlib import pyplot as plt
 import pickle
 
 
 class Classifications:
-    __classifications_types = ['Logistic Regression', 'Decision Tree', 'Random Forest',
-                               'SVM', 'SVM Linear Kernel', 'SVM RPF Kernel',
-                               'SVM Poly Kernel', 'K-Nearest Neighbors', 'Naive Bayes',
-                               'XGBoost']
-
     @staticmethod
-    def apply_classifications(x_train, y_train, x_test, y_test):
-        methods = [
-            Classifications.__LR, Classifications.__DT, Classifications.__RF, Classifications.__SVM,
-            Classifications.__SVM_Lin, Classifications.__SVM_RPF, Classifications.__SVM_Poly,
-            Classifications.__KNeighbors, Classifications.__Gaussian, Classifications.__XGB
-        ]
-        returned_data = dict()
-        for i in range(len(Classifications.__classifications_types)):
-            returned_data[Classifications.__classifications_types[i]] = methods[i](x_train, y_train, x_test, y_test)
-
-        return returned_data
-
-    @staticmethod
-    def __saveModel(model_name, clf):
+    def __save_model(model_name, clf, train_time):
         with open(f'classification_models/{model_name}.pkl', 'wb') as file:
             pickle.dump(clf, file)
+        with open(f'training_time/{model_name}.txt') as file:
+            file.write(train_time)
 
     @staticmethod
-    def __LR(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = LogisticRegression()
-        clf.fit(x_train, y_train)
-
-        # Classifications.__saveModel(Classifications.__classifications_types[0], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
+    def __get_saved_model(model_name):
+        with open(f'classification_models/{model_name}.pkl', 'rb') as file:
+            model = pickle.load(file)
+        with open(f'training_time/{model_name}.txt', 'rb') as file:
+            train_time = file.read()
+        return model, train_time
 
     @staticmethod
-    def __DT(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = DecisionTreeClassifier()
-        clf.fit(x_train, y_train)
-
-        # Classifications.__saveModel(Classifications.__classifications_types[1], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
+    def gridSearch(params, clf, x_train, y_train, is_cat=False):
+        grid_search = GridSearchCV(clf, params, cv=5)
+        if is_cat:
+            grid_search.fit(x_train, y_train, cat_features=None, verbose=False)
+        else:
+            grid_search.fit(x_train, y_train)
+        print("Best Hyperparameters:", grid_search.best_params_)
+        return grid_search.best_estimator_
 
     @staticmethod
-    def __RF(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = RandomForestClassifier()
-        clf.fit(x_train, y_train)
-
-        # Classifications.__saveModel(Classifications.__classifications_types[2], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
-
-    @staticmethod
-    def __SVM(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = SVC()
-        clf.fit(x_train, y_train)
-
-        # Classifications.__saveModel(Classifications.__classifications_types[3], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
-
-    @staticmethod
-    def __SVM_Lin(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = SVC(kernel='linear')
-        clf.fit(x_train, y_train)
-
-        # Classifications.__saveModel(Classifications.__classifications_types[4], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
-
-    @staticmethod
-    def __SVM_RPF(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = SVC(kernel='rbf')
-        grid_search = GridSearchCV(clf, {'C': [0.1, 1, 10], 'gamma': [0.01, 0.1, 1]}, cv=5)
-        grid_search.fit(x_train, y_train)
-        clf = grid_search.best_estimator_
-        clf.fit(x_train, y_train)
-
-        # Classifications.__saveModel(Classifications.__classifications_types[5], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
-
-    @staticmethod
-    def __SVM_Poly(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = SVC(kernel='poly')
-        grid_search = GridSearchCV(clf, {'C': [0.1, 1, 10], 'degree': [2, 3, 4]}, cv=5)
-        grid_search.fit(x_train, y_train)
-        clf = grid_search.best_estimator_
-        clf.fit(x_train, y_train)
-
-        # Classifications.__saveModel(Classifications.__classifications_types[6], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
-
-    @staticmethod
-    def __KNeighbors(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = KNeighborsClassifier()
-        grid_search = GridSearchCV(clf, {'n_neighbors': [3, 5, 7]}, cv=5)
-        grid_search.fit(x_train, y_train)
-        clf = grid_search.best_estimator_
-        clf.fit(x_train, y_train)
-
-        # Classifications.__saveModel(Classifications.__classifications_types[7], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
-
-    @staticmethod
-    def __Gaussian(x_train, y_train, x_test, y_test):
+    def Gaussian(x_train, y_train, x_test, y_test):
         train_start_time = time.time()
         clf = GaussianNB()
+        param_grid = {
+            'priors': [None, [0.25, 0.25, 0.5], [0.1, 0.5, 0.4]],
+            'var_smoothing': [1e-9, 1e-8, 1e-7]
+        }
+        clf = Classifications.gridSearch(param_grid, clf, x_train, y_train)
         clf.fit(x_train, y_train)
 
-        # Classifications.__saveModel(Classifications.__classifications_types[8], clf)
+        # Classifications.saveModel(Classifications.classifications_types[8], clf)
 
         # Calculate the total train time
         total_train_time = time.time() - train_start_time
@@ -219,15 +64,97 @@ class Classifications:
         return acc * 100, mse, total_train_time, total_test_time
 
     @staticmethod
-    def __XGB(x_train, y_train, x_test, y_test):
+    def XGB(x_train, y_train, x_test, y_test):
         train_start_time = time.time()
-        clf = XGBClassifier(use_label_encoder=False)
-        grid_search = GridSearchCV(clf, {'learning_rate': [0.1, 0.01], 'max_depth': [3, 5, 7]}, cv=5)
-        grid_search.fit(x_train, y_train)
-        clf = grid_search.best_estimator_
+        clf = XGBClassifier()
+        param_grid = {
+            'max_depth': [3, 4, 5],
+            'learning_rate': [0.1, 0.01, 0.001],
+            'n_estimators': [100, 200, 300],
+            'gamma': [0, 0.1, 0.2],
+            'subsample': [0.6, 0.8, 1.0],
+            'colsample_bytree': [0.6, 0.8, 1.0],
+            'use_label_encoder': [True, False]
+        }
+        clf = Classifications.gridSearch(param_grid, clf, x_train, y_train)
         clf.fit(x_train, y_train)
 
-        # Classifications.__saveModel(Classifications.__classifications_types[9], clf)
+        # Classifications.saveModel(Classifications.classifications_types[9], clf)
+
+        # Calculate the total train time
+        total_train_time = time.time() - train_start_time
+
+        test_start_time = time.time()
+        y_pred = clf.predict(x_test)
+        # Calculate the total test time
+        total_test_time = time.time() - test_start_time
+        mse = mean_squared_error(y_test, y_pred)
+        acc = accuracy_score(y_test, y_pred)
+        return acc * 100, mse, total_train_time, total_test_time
+
+
+    @staticmethod
+    def ADABoost(x_train, y_train, x_test, y_test):
+        train_start_time = time.time()
+        clf = AdaBoostClassifier()
+        param_grid = {
+            'n_estimators': [50, 100, 200],
+            'learning_rate': [0.1, 0.01, 0.001]
+        }
+        clf = Classifications.gridSearch(param_grid, clf, x_train, y_train)
+        clf.fit(x_train, y_train)
+
+        # Classifications.saveModel(Classifications.classifications_types[9], clf)
+
+        # Calculate the total train time
+        total_train_time = time.time() - train_start_time
+
+        test_start_time = time.time()
+        y_pred = clf.predict(x_test)
+        # Calculate the total test time
+        total_test_time = time.time() - test_start_time
+        mse = mean_squared_error(y_test, y_pred)
+        acc = accuracy_score(y_test, y_pred)
+        return acc * 100, mse, total_train_time, total_test_time
+
+    @staticmethod
+    def GBM(x_train, y_train, x_test, y_test):
+        train_start_time = time.time()
+        clf = GradientBoostingClassifier()
+        param_grid = {
+            'n_estimators': [50, 100, 200],
+            'learning_rate': [0.1, 0.01, 0.001],
+            'max_depth': [3, 4, 5]
+        }
+        clf = Classifications.gridSearch(param_grid, clf, x_train, y_train)
+        clf.fit(x_train, y_train)
+
+        # Classifications.saveModel(Classifications.classifications_types[9], clf)
+
+        # Calculate the total train time
+        total_train_time = time.time() - train_start_time
+
+        test_start_time = time.time()
+        y_pred = clf.predict(x_test)
+        # Calculate the total test time
+        total_test_time = time.time() - test_start_time
+        mse = mean_squared_error(y_test, y_pred)
+        acc = accuracy_score(y_test, y_pred)
+        return acc * 100, mse, total_train_time, total_test_time
+
+    @staticmethod
+    def LightGBM(x_train, y_train, x_test, y_test):
+        train_start_time = time.time()
+        clf = LGBMClassifier()
+        param_grid = {
+            'n_estimators': [50, 100, 200],
+            'learning_rate': [0.1, 0.01, 0.001],
+            'max_depth': [3, 4, 5]
+        }
+        clf = Classifications.gridSearch(param_grid, clf, x_train, y_train)
+        clf.fit(x_train, y_train)
+
+        # Classifications.saveModel(Classifications.classifications_types[9], clf)
 
         # Calculate the total train time
         total_train_time = time.time() - train_start_time
@@ -268,21 +195,37 @@ class Classifications:
         plt.show()
 
     @staticmethod
-    def xxx(train, x_train, y_train, x_test, y_test):
-        models = ['Logistic Regression', 'Decision Tree', 'Random Forest',
-                  'SVM', 'SVM Linear Kernel', 'SVM RPF Kernel',
-                  'SVM Poly Kernel', 'K-Nearest Neighbors', 'Naive Bayes',
-                  'XGBoost']
+    def classify(x_train, y_train, x_test, y_test, train=True):
+        models = ['Logistic Regression', 'Decision Tree', 'Random Forest', 'SVM',
+                  'SVM Linear Kernel', 'SVM RPF Kernel', 'SVM Poly Kernel',
+                  'K-Nearest Neighbors', 'Naive Bayes', 'XGBoost',
+                  'AdaBoost', 'Gradient Boost', 'Light Gradient Boost']
 
-        clf = [LogisticRegression(), DecisionTreeClassifier(), RandomForestClassifier(),
-               SVC(), SVC(kernel='linear'), SVC(kernel='rbf'), SVC(kernel='poly'), KNeighborsClassifier(),
-               GaussianNB(), XGBClassifier(use_label_encoder=False)]
-
+        clf = [LogisticRegression(max_iter=1000, random_state=42, C=10, penalty='l2', solver='lbfgs'),
+               DecisionTreeClassifier(criterion='gini', max_depth=5, min_samples_leaf=2, min_samples_split=2),
+               RandomForestClassifier(bootstrap=False, max_depth=15, min_samples_leaf=1, min_samples_split=2,
+                                      n_estimators=200),
+               SVC(C=100, degree=2, gamma=0.1), SVC(kernel='linear', C=10, degree=2, gamma='scale'),
+               SVC(kernel='rbf', C=100, degree=2, gamma=0.1), SVC(kernel='poly'),
+               KNeighborsClassifier(), GaussianNB(), XGBClassifier(),
+               AdaBoostClassifier(), GradientBoostingClassifier(), LGBMClassifier()]
+        train_times, test_times, acc, mse = [], [], [], []
         for i in range(len(models)):
             if train:
                 train_start_time = time.time()
-                clf[i].fit(x_train, y_train)
-                total_train_time = time.time() - train_start_time
-                Classifications.__saveModel(models[i], clf[i])
+                working_clf = clf[i]
+                working_clf.fit(x_train, y_train)
+                train_time = time.time() - train_start_time
+                train_times.append(train_time)
+                Classifications.__save_model(models[i], working_clf, train_time)
             else:
-                clf[i].predict(x_test)
+                working_clf, train_time = Classifications.__get_saved_model(models[i])
+                train_times.append(train_time)
+
+            test_start_time = time.time()
+            y_pred = working_clf.predict(x_test)
+            test_times.append(time.time() - test_start_time)
+            mse.append(mean_squared_error(y_test, y_pred))
+            acc.append(f'{accuracy_score(y_test, y_pred) * 100} %')
+
+        return models, acc, mse, test_times, train_times
