@@ -47,7 +47,7 @@ class Regressions:
                         'Random Forest Regression', 'Gradient Boosting Regression', 'Polynomial with Lasso']
 
         # Identify Models Regressors
-        models = [LinearRegression(), PolynomialFeatures(degree=2), Ridge(alpha=.005),
+        regressors = [LinearRegression(), PolynomialFeatures(degree=2), Ridge(alpha=.005),
                   Lasso(alpha=.005), ElasticNet(alpha=.005, l1_ratio=1.0), SVR(kernel='linear'),
                   DecisionTreeRegressor(), RandomForestRegressor(), GradientBoostingRegressor(),
                   Pipeline([('poly', PolynomialFeatures(degree=2)), ('lasso', Lasso(alpha=0.001))])]
@@ -64,7 +64,7 @@ class Regressions:
 
                     # In Train scenario
                     # Train the Model
-                    working_regressor = models[i]
+                    working_regressor = regressors[i]
                     working_regressor.fit(x_train, y_train)
 
                     # Save the Model in pickle to use it in testing
@@ -84,11 +84,11 @@ class Regressions:
             else:
 
                 # Make the Same Steps in the other Regressors by the different in Polynomial
-                working_regressor = models[i]
+                working_regressor = regressors[i]
                 x_poly_train = working_regressor.fit_transform(x_train)
                 x_poly_test = working_regressor.transform(x_test)
                 if train:
-                    poly_model = models[i - 1]
+                    poly_model = regressors[i - 1]
                     poly_model.fit(x_poly_train, y_train)
                     Regressions.__save_model(models_names[i], poly_model)
                 else:
