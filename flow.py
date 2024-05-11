@@ -75,8 +75,6 @@ class AppFlow:
         # plot the results
         rs.Regressions.plotting(y_test, y_pred, mses, model_names, r2_scores)
 
-        return model_names, y_pred, mses
-
     @staticmethod
     def __do_classification(x, y, train=True):
         print("Start in classification ==============")
@@ -96,8 +94,6 @@ class AppFlow:
             print('================================')
 
         cs.Classifications.plotting(acc, trains, tests)
-
-        return models, acc, mse, tests, trains
 
     @staticmethod
     def run_model(file, train=True):

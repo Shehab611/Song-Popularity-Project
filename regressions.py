@@ -48,9 +48,9 @@ class Regressions:
 
         # Identify Models Regressors
         regressors = [LinearRegression(), PolynomialFeatures(degree=2), Ridge(alpha=.005),
-                  Lasso(alpha=.005), ElasticNet(alpha=.005, l1_ratio=1.0), SVR(kernel='linear'),
-                  DecisionTreeRegressor(), RandomForestRegressor(), GradientBoostingRegressor(),
-                  Pipeline([('poly', PolynomialFeatures(degree=2)), ('lasso', Lasso(alpha=0.001))])]
+                      Lasso(alpha=.005), ElasticNet(alpha=.005, l1_ratio=1.0), SVR(kernel='linear'),
+                      DecisionTreeRegressor(), RandomForestRegressor(), GradientBoostingRegressor(),
+                      Pipeline([('poly', PolynomialFeatures(degree=2)), ('lasso', Lasso(alpha=0.001))])]
 
         y_preds, mse, r2_scores = [], [], []
 
