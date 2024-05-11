@@ -1,9 +1,47 @@
-from sklearn.preprocessing import LabelEncoder,MinMaxScaler
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 import pandas as pd
 import ast
 
 
 class PreProcessing:
+
+    @staticmethod
+    def __save_fill_null_values(fill_values):
+        with open('fill_nulls.txt', 'w') as file:
+            file.write(str(fill_values))
+
+    @staticmethod
+    def __get_fill_null_values():
+        with open('fill_nulls.txt', 'r') as file:
+            fill_values = ast.literal_eval(file.read())
+        return fill_values
+
+    @staticmethod
+    def handle_nulls_in_train_data(train_data):
+        fill_values = {}
+        for column in train_data.columns:
+            if train_data[column].dtype == 'object':
+                fill_value = train_data[column].mode()[0]
+                fill_values[column] = fill_value
+                train_data.fillna({column: fill_value}, inplace=True)
+            else:
+                fill_value = train_data[column].median()
+                fill_values[column] = fill_value
+                train_data.fillna({column: fill_value}, inplace=True)
+
+        PreProcessing.__save_fill_null_values(fill_values)
+
+    @staticmethod
+    def handle_nulls_in_test_data(test_data):
+        fill_values = PreProcessing.__get_fill_null_values()
+
+        for column in test_data.columns:
+            if test_data[column].dtype == 'object':
+                test_data[column].fillna(fill_values[column], inplace=True)
+            else:
+                test_data[column].fillna(fill_values[column], inplace=True)
+        return test_data
+
     @staticmethod
     def drop_column(data, column_name):
         data.drop(column_name, inplace=True, axis=1)
