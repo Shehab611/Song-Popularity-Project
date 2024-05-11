@@ -9,6 +9,7 @@ class AppFlow:
 
     @staticmethod
     def __preprocessing(data):
+        print("start in preprocessing =========")
         if 'PopularityLevel' in data.columns:
             model_type = 'classification'
             y = ps.PreProcessing.label_encode(data, 'PopularityLevel')
@@ -44,43 +45,46 @@ class AppFlow:
 
         for feature in low_correlated_features:
             ps.PreProcessing.drop_column(data, feature)
-
+        print("Finish Pre processing ==============")
         return x, y, model_type
 
     @staticmethod
-    def __do_regression(x, y):
+    def __do_regression(x, y, train=True):
+        print("Start in regression ==============")
         # train and test
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25, shuffle=True,
                                                             random_state=44)
         # apply regression models
-        model_names, y_pred, mses = rs.Regressions.regression(x_train, y_train, x_test, y_test)
+        model_names, y_pred, mses = rs.Regressions.regression(x_train, y_train, x_test, y_test, train)
 
         # plot the results
         rs.Regressions.plotting(y_test, y_pred, mses, model_names)
 
+        return model_names, y_pred, mses
+
     @staticmethod
-    def __do_classification(x, y):
+    def __do_classification(x, y, train=True):
+        print("Start in classification ==============")
         # train and test
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True,
                                                             random_state=42)
         # apply classification models
-        # models, acc, mse, tests, trains = cs.Classifications.classify(x_train, y_train, x_test, y_test)
-        acc, mse, _, _ = cs.Classifications.CATBOOST(x_train, y_train, x_test, y_test)
+        models, acc, mse, tests, trains = cs.Classifications.classify(x_train, y_train, x_test, y_test, train)
+        # plotting and print the results
+        for i in range(len(models)):
+            print(f'========== {models[i]} ==========')
+            print(f"Accuracy: {acc[i]} %")
+            print(f'MSE = {mse[i]}')
+            print(f'Total Train Time = {trains[i]}')
+            print(f'Total Test Time = {tests[i]}')
+            print('================================')
 
-        print(acc, mse)
-        # # plotting and print the results
-        # for i in range(len(models)):
-        #     print(f'========== {models[i]} ==========')
-        #     print(f"Accuracy: {acc[i]}")
-        #     print(f'MSE = {mse[i]}')
-        #     print(f'Total Train Time = {trains[i]}')
-        #     print(f'Total Test Time = {tests[i]}')
-        #     print('================================')
-        #
-        # cs.Classifications.plotting(models, acc, trains, tests)
+        cs.Classifications.plotting(models, acc, trains, tests)
+
+        return models, acc, mse, tests, trains
 
     @staticmethod
-    def run_model(file):
+    def run_model(file, train=True):
         # Read the Data
         data = pd.read_csv(file)
 
@@ -89,6 +93,6 @@ class AppFlow:
 
         # Check which model type should we run
         if model_type == 'regression':
-            AppFlow.__do_regression(x, y)
+            AppFlow.__do_regression(x, y, train)
         else:
-            AppFlow.__do_classification(x, y)
+            AppFlow.__do_classification(x, y, train)

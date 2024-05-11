@@ -4,7 +4,6 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, Gradien
 from sklearn.metrics import mean_squared_error, accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
-from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
@@ -18,197 +17,60 @@ class Classifications:
     def __save_model(model_name, clf, train_time):
         with open(f'classification_models/{model_name}.pkl', 'wb') as file:
             pickle.dump(clf, file)
-        with open(f'training_time/{model_name}.txt') as file:
-            file.write(train_time)
+        with open(f'training_time/{model_name}.txt', 'w') as file:
+            file.write(str(train_time))
 
     @staticmethod
     def __get_saved_model(model_name):
         with open(f'classification_models/{model_name}.pkl', 'rb') as file:
             model = pickle.load(file)
-        with open(f'training_time/{model_name}.txt', 'rb') as file:
-            train_time = file.read()
+        with open(f'training_time/{model_name}.txt', 'r') as file:
+            train_time = float(file.read())
         return model, train_time
 
     @staticmethod
-    def gridSearch(params, clf, x_train, y_train, is_cat=False):
-        grid_search = GridSearchCV(clf, params, cv=5)
-        if is_cat:
-            grid_search.fit(x_train, y_train, cat_features=None, verbose=False)
-        else:
-            grid_search.fit(x_train, y_train)
-        print("Best Hyperparameters:", grid_search.best_params_)
-        return grid_search.best_estimator_
-
-    @staticmethod
-    def Gaussian(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = GaussianNB()
-        param_grid = {
-            'priors': [None, [0.25, 0.25, 0.5], [0.1, 0.5, 0.4]],
-            'var_smoothing': [1e-9, 1e-8, 1e-7]
-        }
-        clf = Classifications.gridSearch(param_grid, clf, x_train, y_train)
-        clf.fit(x_train, y_train)
-
-        # Classifications.saveModel(Classifications.classifications_types[8], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
-
-    @staticmethod
-    def XGB(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = XGBClassifier()
-        param_grid = {
-            'max_depth': [3, 4, 5],
-            'learning_rate': [0.1, 0.01, 0.001],
-            'n_estimators': [100, 200, 300],
-            'gamma': [0, 0.1, 0.2],
-            'subsample': [0.6, 0.8, 1.0],
-            'colsample_bytree': [0.6, 0.8, 1.0],
-            'use_label_encoder': [True, False]
-        }
-        clf = Classifications.gridSearch(param_grid, clf, x_train, y_train)
-        clf.fit(x_train, y_train)
-
-        # Classifications.saveModel(Classifications.classifications_types[9], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
-
-
-    @staticmethod
-    def ADABoost(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = AdaBoostClassifier()
-        param_grid = {
-            'n_estimators': [50, 100, 200],
-            'learning_rate': [0.1, 0.01, 0.001]
-        }
-        clf = Classifications.gridSearch(param_grid, clf, x_train, y_train)
-        clf.fit(x_train, y_train)
-
-        # Classifications.saveModel(Classifications.classifications_types[9], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
-
-    @staticmethod
-    def GBM(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = GradientBoostingClassifier()
-        param_grid = {
-            'n_estimators': [50, 100, 200],
-            'learning_rate': [0.1, 0.01, 0.001],
-            'max_depth': [3, 4, 5]
-        }
-        clf = Classifications.gridSearch(param_grid, clf, x_train, y_train)
-        clf.fit(x_train, y_train)
-
-        # Classifications.saveModel(Classifications.classifications_types[9], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
-
-    @staticmethod
-    def LightGBM(x_train, y_train, x_test, y_test):
-        train_start_time = time.time()
-        clf = LGBMClassifier()
-        param_grid = {
-            'n_estimators': [50, 100, 200],
-            'learning_rate': [0.1, 0.01, 0.001],
-            'max_depth': [3, 4, 5]
-        }
-        clf = Classifications.gridSearch(param_grid, clf, x_train, y_train)
-        clf.fit(x_train, y_train)
-
-        # Classifications.saveModel(Classifications.classifications_types[9], clf)
-
-        # Calculate the total train time
-        total_train_time = time.time() - train_start_time
-
-        test_start_time = time.time()
-        y_pred = clf.predict(x_test)
-        # Calculate the total test time
-        total_test_time = time.time() - test_start_time
-        mse = mean_squared_error(y_test, y_pred)
-        acc = accuracy_score(y_test, y_pred)
-        return acc * 100, mse, total_train_time, total_test_time
-
-    @staticmethod
     def plotting(model_names, class_accuracy, train_time, test_time):
-        num_models = len(model_names)
-        fig, axes = plt.subplots(num_models, 3, figsize=(15, 5 * num_models))
+        fig = plt.figure(figsize=(11, 11))
+        rows, columns, bar_width = 4, 3, 0.15
+        places, labels = [0.1, 0.6, 1], ['Accuracy', 'Train Time', 'Test Time']
 
-        for i, model_name in enumerate(model_names):
-            # Plot classification accuracy
-            axes[i, 0].bar(model_name, class_accuracy[i], color='skyblue')
-            axes[i, 0].set_title(f'{model_name} Classification Accuracy')
-            axes[i, 0].set_ylabel('Accuracy')
-            axes[i, 0].set_xlabel('Model')
+        for i in range(1, rows * columns + 1):
+            if i == (len(model_names) + 1):
+                break
+            ax = fig.add_subplot(rows, columns, i)
+            ax.bar(places[0], class_accuracy[i - 1], color='r', width=bar_width,
+                   edgecolor='grey', label=labels[0])
+            ax.bar(places[1], train_time[i - 1], color='g', width=bar_width,
+                   edgecolor='grey', label=labels[1])
+            ax.bar(places[2], test_time[i - 1], color='b', width=bar_width,
+                   edgecolor='grey', label=labels[2])
+            plt.ylabel('Values', fontweight='bold')
+            plt.xticks(places, labels)
+            ax.set_title(model_names[i - 1])
 
-            # Plot total training time
-            axes[i, 1].bar(model_name, train_time[i], color='salmon')
-            axes[i, 1].set_title(f'{model_name} Total Training Time')
-            axes[i, 1].set_ylabel('Time (seconds)')
-            axes[i, 1].set_xlabel('Model')
-
-            # Plot total test time
-            axes[i, 2].bar(model_name, test_time[i], color='lightgreen')
-            axes[i, 2].set_title(f'{model_name} Total Test Time')
-            axes[i, 2].set_ylabel('Time (seconds)')
-            axes[i, 2].set_xlabel('Model')
-
-        plt.tight_layout()
+        plt.subplots_adjust(left=0.1, bottom=0.07, right=0.9, top=0.925, wspace=0.4, hspace=1)
         plt.show()
 
     @staticmethod
     def classify(x_train, y_train, x_test, y_test, train=True):
         models = ['Logistic Regression', 'Decision Tree', 'Random Forest', 'SVM',
-                  'SVM Linear Kernel', 'SVM RPF Kernel', 'SVM Poly Kernel',
-                  'K-Nearest Neighbors', 'Naive Bayes', 'XGBoost',
-                  'AdaBoost', 'Gradient Boost', 'Light Gradient Boost']
+                  'SVM Linear Kernel', 'SVM RPF Kernel', 'K-Nearest Neighbors',
+                  'Gaussian Naive Bayes', 'XGBoost', 'AdaBoost',
+                  'Gradient Boost', 'Light Gradient Boost']
 
         clf = [LogisticRegression(max_iter=1000, random_state=42, C=10, penalty='l2', solver='lbfgs'),
                DecisionTreeClassifier(criterion='gini', max_depth=5, min_samples_leaf=2, min_samples_split=2),
                RandomForestClassifier(bootstrap=False, max_depth=15, min_samples_leaf=1, min_samples_split=2,
                                       n_estimators=200),
                SVC(C=100, degree=2, gamma=0.1), SVC(kernel='linear', C=10, degree=2, gamma='scale'),
-               SVC(kernel='rbf', C=100, degree=2, gamma=0.1), SVC(kernel='poly'),
-               KNeighborsClassifier(), GaussianNB(), XGBClassifier(),
-               AdaBoostClassifier(), GradientBoostingClassifier(), LGBMClassifier()]
+               SVC(kernel='rbf', C=100, degree=2, gamma=0.1),
+               KNeighborsClassifier(algorithm='auto', n_neighbors=7, p=1, weights='distance'),
+               GaussianNB(priors=None, var_smoothing=1e-08),
+               XGBClassifier(gamma=0, colsample_bytree=0.6, learing_rate=0.1, max_depth=5, n_estimators=200,
+                             subsample=0.6, use_label_encoder=True),
+               AdaBoostClassifier(learning_rate=0.1, n_estimators=200),
+               GradientBoostingClassifier(learning_rate=0.1, max_depth=5, n_estimators=50),
+               LGBMClassifier(force_col_wise=True, learning_rate=0.01)]
         train_times, test_times, acc, mse = [], [], [], []
         for i in range(len(models)):
             if train:
@@ -226,6 +88,6 @@ class Classifications:
             y_pred = working_clf.predict(x_test)
             test_times.append(time.time() - test_start_time)
             mse.append(mean_squared_error(y_test, y_pred))
-            acc.append(f'{accuracy_score(y_test, y_pred) * 100} %')
+            acc.append(accuracy_score(y_test, y_pred) * 100)
 
         return models, acc, mse, test_times, train_times

@@ -1,3 +1,7 @@
 import flow as flow
 
-flow.AppFlow.run_model('SongPopularity_Milestone2.csv')
+# for regression
+flow.AppFlow.run_model('SongPopularity.csv', train=True)
+
+# for classification
+flow.AppFlow.run_model('SongPopularity_Milestone2.csv', train=True)

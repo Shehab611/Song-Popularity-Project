@@ -13,9 +13,9 @@ import pickle
 class Regressions:
 
     @staticmethod
-    def __save_model(model_name, clf):
+    def __save_model(model_name, model):
         with open(f'regressions_models/{model_name}.pkl', 'wb') as file:
-            pickle.dump(clf, file)
+            pickle.dump(model, file)
 
     @staticmethod
     def __get_saved_model(model_name):
@@ -27,7 +27,7 @@ class Regressions:
         fig = plt.figure(figsize=(11, 11))
         rows, columns = 4, 3
         for i in range(1, rows * columns + 1):
-            if i == 11:
+            if i == (len(model_name) + 1):
                 break
             ax = fig.add_subplot(rows, columns, i)
             ax.scatter(y_test, y_pred[i - 1])
@@ -47,8 +47,8 @@ class Regressions:
 
         models = [LinearRegression(), PolynomialFeatures(degree=2), Ridge(alpha=.005),
                   Lasso(alpha=.005), ElasticNet(alpha=.005, l1_ratio=1.0), SVR(kernel='linear'),
-                  DecisionTreeRegressor(),RandomForestRegressor(), GradientBoostingRegressor(),
-                  Pipeline([('poly', PolynomialFeatures(degree=2)),('lasso', Lasso(alpha=0.001))])]
+                  DecisionTreeRegressor(), RandomForestRegressor(), GradientBoostingRegressor(),
+                  Pipeline([('poly', PolynomialFeatures(degree=2)), ('lasso', Lasso(alpha=0.001))])]
 
         y_preds, mse = [], []
 
@@ -66,7 +66,7 @@ class Regressions:
                 y_preds.append(y_pred)
             else:
                 working_clf = models[i]
-                x_poly_train = working_clf.transform(x_train)
+                x_poly_train = working_clf.fit_transform(x_train)
                 x_poly_test = working_clf.transform(x_test)
                 if train:
                     poly_model = models[i - 1]

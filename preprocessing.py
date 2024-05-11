@@ -1,6 +1,5 @@
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder,MinMaxScaler
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 import ast
 
 
