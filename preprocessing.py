@@ -6,13 +6,13 @@ import ast
 class PreProcessing:
 
     @staticmethod
-    def __save_fill_null_values(fill_values):
-        with open('fill_nulls.txt', 'w') as file:
+    def __save_fill_null_values(fill_values, typee):
+        with open(f'{typee}_fill_nulls.txt', 'w') as file:
             file.write(str(fill_values))
 
     @staticmethod
-    def __get_fill_null_values():
-        with open('fill_nulls.txt', 'r') as file:
+    def __get_fill_null_values(typee):
+        with open(f'{typee}_fill_nulls.txt', 'r') as file:
             fill_values = ast.literal_eval(file.read())
         return fill_values
 
@@ -28,12 +28,20 @@ class PreProcessing:
                 fill_value = train_data[column].median()
                 fill_values[column] = fill_value
                 train_data.fillna({column: fill_value}, inplace=True)
-
-        PreProcessing.__save_fill_null_values(fill_values)
+        if 'PopularityLevel' in train_data.columns:
+            model_type = 'classification'
+        else:
+            model_type = 'regression'
+        PreProcessing.__save_fill_null_values(fill_values, model_type)
 
     @staticmethod
     def handle_nulls_in_test_data(test_data):
-        fill_values = PreProcessing.__get_fill_null_values()
+        if 'PopularityLevel' in test_data.columns:
+            model_type = 'classification'
+        else:
+            model_type = 'regression'
+
+        fill_values = PreProcessing.__get_fill_null_values(model_type)
 
         for column in test_data.columns:
             if test_data[column].dtype == 'object':
