@@ -31,7 +31,6 @@
 <h2>Machine Learning Techniques</h2>
 
 1. **Train 10 different regression models**
-
   - Linear Regression
   - Polynomial Regression
   - Ridge Regression
@@ -44,7 +43,6 @@
   - Polynomial with Lasso Regression
 
 2. **Train 12 different classification models**
-
   - Logistic Regression
   - Decision Tree Classifier
   - Random Forest Classifier
