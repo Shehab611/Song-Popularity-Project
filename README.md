@@ -41,7 +41,6 @@
   * Random Forest Regression
   * Gradient Boosting Regression
   * Polynomial with Lasso Regression
-
     Save Each Model After Training in a Pickle with its name
 
 2. Train 12 different classification models
@@ -58,7 +57,6 @@
   * AdaBoost Classifier
   * Gradient Boost Classifier
   * Light Gradient Boost Classifier
-
     Save Each Model After Training in a Pickle with its name
 <h2>💻 Built with</h2>
 
@@ -68,6 +66,6 @@ Technologies used in the project:
 *   train\_test\_split
 *   LabelEncoder
 *   MinMaxScaler
-*   numpy
+*   NumPy
 *   pickle
 *   matplot
