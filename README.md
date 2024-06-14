@@ -29,6 +29,7 @@
     As They won't affect the model accuracy and make further unwanted processing
   
 <h2>Machine Learning Techniques</h2>
+
 1. **Train 10 different regression models**
 
   - Linear Regression
