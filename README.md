@@ -29,37 +29,35 @@
     As They won't affect the model accuracy and make further unwanted processing
   
 <h2>Machine Learning Techniques</h2>
-1. Train 10 different regression models
+1. **Train 10 different regression models**
 
-  * Linear Regression
-  * Polynomial Regression
-  * Ridge Regression
-  * Lasso Regression
-  * ElasticNet Regression
-  * Support Vector Regression
-  * Decision Tree Regression
-  * Random Forest Regression
-  * Gradient Boosting Regression
-  * Polynomial with Lasso Regression
+  - Linear Regression
+  - Polynomial Regression
+  - Ridge Regression
+  - Lasso Regression
+  - ElasticNet Regression
+  - Support Vector Regression
+  - Decision Tree Regression
+  - Random Forest Regression
+  - Gradient Boosting Regression
+  - Polynomial with Lasso Regression
 
-      Save Each Model After Training in a Pickle with its name
+2. **Train 12 different classification models**
 
-2. Train 12 different classification models
+  - Logistic Regression
+  - Decision Tree Classifier
+  - Random Forest Classifier
+  - Support Vector Classifier
+  - Support Vector Linear Classifier
+  - Support Vector RPF Classifier
+  - K-Nearest Neighbors Classifier
+  - Gaussian Naive Bayes Classifier
+  - XGBoost Classifier
+  - AdaBoost Classifier
+  - Gradient Boost Classifier
+  - Light Gradient Boost Classifier
 
-  * Logistic Regression
-  * Decision Tree Classifier
-  * Random Forest Classifier
-  * Support Vector Classifier
-  * Support Vector Linear Classifier
-  * Support Vector RPF Classifier
-  * K-Nearest Neighbors Classifier
-  * Gaussian Naive Bayes Classifier
-  * XGBoost Classifier
-  * AdaBoost Classifier
-  * Gradient Boost Classifier
-  * Light Gradient Boost Classifier
-    
-      Save Each Model After Training in a Pickle with its name
+ Save Each Model After Training in a Pickle with its name
 <h2>💻 Built with</h2>
 
 Technologies used in the project:
