@@ -4,7 +4,9 @@
   This helped me enhance my understanding of the workflow involved in machine learning tasks. 
   I learned how to clean data apply pre-processing techniques conduct feature engineering and implement regression and classification methods.
   Each milestone showcases my proficiency in these techniques.
-  The First Milestone is to apply different regression techniques to find the model that fits your data with minimum error. 
+  
+  The First Milestone is to apply different regression techniques to find the model that fits your data with minimum error.
+  
   The Second Milestone is to apply different classification techniques to find the model that fits in the data with minimum error.</p>
 
 
