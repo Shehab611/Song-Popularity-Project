@@ -31,18 +31,35 @@
 <h2>Machine Learning Techniques</h2>
 1. Train 10 different regression models
 
-    |  xx |  tt | b  | f  |q   |
-    |---|---|---|---|---|
-    | 1  |  2 |   |   |   |
-    |  1 |  2 |   |   |   |
-    |   1|  2 |   |   |   |
+  * Linear Regression
+  * Polynomial Regression
+  * Ridge Regression
+  * Lasso Regression
+  * ElasticNet Regression
+  * Support Vector Regression
+  * Decision Tree Regression
+  * Random Forest Regression
+  * Gradient Boosting Regression
+  * Polynomial with Lasso Regression
 
-  5. Save the Model after training
-    Save the Model in Pickle after training so i can use it when test without training again and consume more time
-*   Get the saved model in test data
-*   apply 10 different regression models
-*   apply 12 different classification models
-*   Plot the data
+  Save Each Model After Training in a Pickle with its name
+
+2. Train 12 different classification models
+
+  * Logistic Regression
+  * Decision Tree Classifier
+  * Random Forest Classifier
+  * Support Vector Classifier
+  * Support Vector Linear Classifier
+  * Support Vector RPF Classifier
+  * K-Nearest Neighbors Classifier
+  * Gaussian Naive Bayes Classifier
+  * XGBoost Classifier
+  * AdaBoost Classifier
+  * Gradient Boost Classifier
+  * Light Gradient Boost Classifier
+
+  Save Each Model After Training in a Pickle with its name
 <h2>💻 Built with</h2>
 
 Technologies used in the project:
