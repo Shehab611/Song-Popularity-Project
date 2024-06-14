@@ -41,7 +41,6 @@
   - Random Forest Regression
   - Gradient Boosting Regression
   - Polynomial with Lasso Regression
-
 2. **Train 12 different classification models**
   - Logistic Regression
   - Decision Tree Classifier
