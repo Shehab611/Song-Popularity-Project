@@ -44,10 +44,7 @@ class PreProcessing:
         fill_values = PreProcessing.__get_fill_null_values(model_type)
 
         for column in test_data.columns:
-            if test_data[column].dtype == 'object':
-                test_data[column].fillna(fill_values[column], inplace=True)
-            else:
-                test_data[column].fillna(fill_values[column], inplace=True)
+            test_data[column].fillna(fill_values[column], inplace=True)
         return test_data
 
     @staticmethod
