@@ -61,7 +61,7 @@
 
 * Regression Data Plots
 
-    <img src="https://github.com/Shehab611/Song-Popularity-Project/assets/77563526/31dff4db-331f-4588-81f8-a8f2cf52fe7d" alt="project-screenshot" width="600" height="400/">
+    <img src="https://github.com/Shehab611/Song-Popularity-Project/assets/77563526/31dff4db-331f-4588-81f8-a8f2cf52fe7d" alt="project-screenshot" width="800" height="450/">
  
 <h2>💻 Built with</h2>
 
