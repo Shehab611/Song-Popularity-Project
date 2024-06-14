@@ -19,10 +19,13 @@
     1. get the filling data from the text file to use them
     2. use these data to fill the null in test data
 2. Encode Data
+
     Encode all the label data to numerical ones so that the model can use it
 3. Normalize the Data
+
     Normalize all the features using the min-max scaler 
 4. Drop unique and low-correlated data
+
     As They won't affect the model accuracy and make further unwanted processing
   
 <h2>Machine Learning Techniques</h2>
